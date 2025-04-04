@@ -1,36 +1,50 @@
 const config = require('../config');
-const mysql = require('mysql');
+const mysql = require('mysql2/promise'); 
 
-// Crear pool de conexiones (mejor que conexión única)
+// Crear pool de conexiones
 const pool = mysql.createPool({
   host: config.db.host,
   user: config.db.user,
   password: config.db.password,
   database: config.db.database,
-  connectionLimit: 10
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-// Función para ejecutar queries
-const query = (sql, params) => {
-  return new Promise((resolve, reject) => {
-    pool.query(sql, params, (err, results) => {
-      if (err) return reject(err);
-      resolve(results);
-    });
-  });
+// Función para ejecutar consultas sin transacción
+const query = async (sql, params = []) => {
+  const connection = await pool.getConnection();
+  try {
+    const [results] = await connection.query(sql, params);
+    return results;
+  } catch (err) {
+    throw err;
+  } finally {
+    connection.release();
+  }
 };
 
-const execute = (sql, params) => {
-  return new Promise((resolve, reject) => {
-    pool.query(sql, params, (err, results) => {
-      if (err) return reject(err);
-      resolve(results);
-    });
-  });
+// Función para ejecutar consultas preparadas sin transacción
+const execute = async (sql, params = []) => {
+  const connection = await pool.getConnection();
+  try {
+    const [results] = await connection.execute(sql, params);
+    return results;
+  } catch (err) {
+    throw err;
+  } finally {
+    connection.release();
+  }
 };
 
-// Exportar solo el método query
+// Obtener una conexión manualmente para transacciones
+const getConnection = async () => {
+  return await pool.getConnection();
+};
+
 module.exports = {
   query,
-  execute
+  execute,
+  getConnection
 };

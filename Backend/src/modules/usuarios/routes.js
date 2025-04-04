@@ -23,5 +23,13 @@ router.post('/niveles', nivelesController.insertNivel);
 router.put('/niveles/:id', nivelesController.updateNivel);
 router.delete('/niveles/:id', nivelesController.deleteNivel);
 
+//rutas de Departamentos
+const departamentosController = require('./departamentos/departamentosController');
+router.get('/departamentos', departamentosController.getAllDepartamentos);
+router.get('/departamentos/:id', departamentosController.getOneDepartamento);
+router.post('/departamentos', departamentosController.insertDepartamento);
+router.put('/departamentos/:id', departamentosController.updateDepartamento);
+router.delete('/departamentos/:id', departamentosController.deleteDepartamento);
+
 
 module.exports = router;

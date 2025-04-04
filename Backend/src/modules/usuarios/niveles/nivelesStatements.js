@@ -16,16 +16,14 @@ const getOneNivel = `${getAllNiveles} WHERE nivel_id = ?`;
 const insertNivel = `
     INSERT INTO Niveles (
         nombre,
-        descripcion,
-        activo
-    ) VALUES (?,?,?)
+        descripcion
+    ) VALUES (?,?)
 `;
 
 const updateNivel = `
     UPDATE Niveles SET
         nombre = ?,
-        descripcion = ?,
-        activo = ?
+        descripcion = ?
     WHERE nivel_id = ?
 `;
 

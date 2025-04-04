@@ -21,7 +21,6 @@ const getOneNivel = async (req, res) => {
   try {
     const id = req.params.id;
     
-    // Validar formato del ID si esperas un número
     if (isNaN(id)) {
       return responses.fail(req, res, "ID de nivel no válido", 400);
     }
@@ -51,7 +50,7 @@ const insertNivel = async (req, res) => {
       return responses.fail(req, res, "Error al crear nivel", 422);
     }
     
-    responses.success(req, res, { id: nivel.insertId, ...req.body }, 201);
+    responses.success(req, res, { id: nivel.insertId, ...req.body });
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       return responses.fail(req, res, "Ya existe un nivel con esos datos", 409);
@@ -64,17 +63,14 @@ const updateNivel = async (req, res) => {
   try {
     const id = req.params.id;
     
-    // Validar formato del ID
     if (isNaN(id)) {
       return responses.fail(req, res, "ID de nivel no válido", 400);
     }
     
-    // Validar datos de entrada
     if (!req.body || Object.keys(req.body).length === 0) {
       return responses.fail(req, res, "Datos de nivel requeridos", 400);
     }
     
-    // Verificar si el nivel existe
     const existingNivel = await NivelesModel.getOneNivel(id);
     if (!existingNivel || (Array.isArray(existingNivel) && existingNivel.length === 0)) {
       return responses.fail(req, res, "Nivel no encontrado", 404);
@@ -99,12 +95,10 @@ const deleteNivel = async (req, res) => {
   try {
     const id = req.params.id;
     
-    // Validar formato del ID
     if (isNaN(id)) {
       return responses.fail(req, res, "ID de nivel no válido", 400);
     }
     
-    // Verificar si el nivel existe
     const existingNivel = await NivelesModel.getOneNivel(id);
     if (!existingNivel || (Array.isArray(existingNivel) && existingNivel.length === 0)) {
       return responses.fail(req, res, "Nivel no encontrado", 404);

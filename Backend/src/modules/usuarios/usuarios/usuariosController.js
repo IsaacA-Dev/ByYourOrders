@@ -19,7 +19,6 @@ const getOneUser = async (req, res) => {
   try {
     const id = req.params.id;
     
-    // Validar formato del ID
     if (isNaN(id)) {
       return responses.fail(req, res, "ID de usuario no válido", 400);
     }
@@ -38,7 +37,6 @@ const getOneUser = async (req, res) => {
 
 const insertUser = async (req, res) => {
   try {
-    // Validar datos de entrada
     if (!req.body || Object.keys(req.body).length === 0) {
       return responses.fail(req, res, "Datos de usuario requeridos", 400);
     }
@@ -55,8 +53,8 @@ const insertUser = async (req, res) => {
     if (!user || !user.insertId) {
       return responses.fail(req, res, "Error al crear usuario", 422);
     }
-    
-    responses.success(req, res, { id: user.insertId, ...req.body }, 201);
+
+    responses.success(req, res, { id: user.insertId, ...req.body });
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       return responses.fail(req, res, "Ya existe un usuario con ese correo electrónico", 409);
@@ -69,17 +67,14 @@ const updateUser = async (req, res) => {
   try {
     const id = req.params.id;
     
-    // Validar formato del ID
     if (isNaN(id)) {
       return responses.fail(req, res, "ID de usuario no válido", 400);
     }
     
-    // Validar datos de entrada
     if (!req.body || Object.keys(req.body).length === 0) {
       return responses.fail(req, res, "Datos de usuario requeridos", 400);
     }
     
-    // Verificar si el usuario existe
     const existingUser = await UsuariosModel.getOneUser(id);
     if (!existingUser || (Array.isArray(existingUser) && existingUser.length === 0)) {
       return responses.fail(req, res, "Usuario no encontrado", 404);
@@ -104,12 +99,10 @@ const deleteUser = async (req, res) => {
   try {
     const id = req.params.id;
     
-    // Validar formato del ID
     if (isNaN(id)) {
       return responses.fail(req, res, "ID de usuario no válido", 400);
     }
     
-    // Verificar si el usuario existe
     const existingUser = await UsuariosModel.getOneUser(id);
     if (!existingUser || (Array.isArray(existingUser) && existingUser.length === 0)) {
       return responses.fail(req, res, "Usuario no encontrado", 404);
