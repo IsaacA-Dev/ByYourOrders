@@ -37,36 +37,38 @@ const getOneUser = async (req, res) => {
 
 const insertUser = async (req, res) => {
   try {
+    const { contrasena, ...userData } = req.body;
+    
     if (!req.body || Object.keys(req.body).length === 0) {
       return responses.fail(req, res, "Datos de usuario requeridos", 400);
     }
     
-    const requiredFields = ['nombre', 'apellido_paterno', 'correo_electronico', 'nivel_id', 'departamento_id'];
+    const requiredFields = ['nombre', 'apellido_paterno', 'correo_electronico', 'nivel_id', 'departamento_id', 'contrasena'];
     for (const field of requiredFields) {
       if (!req.body[field]) {
         return responses.fail(req, res, `Campo ${field} es requerido`, 400);
       }
     }
     
-    const user = await UsuariosModel.insertUser(req.body);
+    const result = await UsuariosModel.insertUser(userData, contrasena);
     
-    if (!user || !user.insertId) {
+    if (!result || !result.usuario_id) {
       return responses.fail(req, res, "Error al crear usuario", 422);
     }
-
-    responses.success(req, res, { id: user.insertId, ...req.body });
+    
+    responses.success(req, res, { id: result.usuario_id, ...userData });
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       return responses.fail(req, res, "Ya existe un usuario con ese correo electrónico", 409);
     }
-    responses.error(req, res, error.message, 500);
+    responses.error(req, res, error.message, 500); // Changed status code from 501 to 500
   }
 };
+
 
 const updateUser = async (req, res) => {
   try {
     const id = req.params.id;
-    
     if (isNaN(id)) {
       return responses.fail(req, res, "ID de usuario no válido", 400);
     }
@@ -80,13 +82,14 @@ const updateUser = async (req, res) => {
       return responses.fail(req, res, "Usuario no encontrado", 404);
     }
     
-    const user = await UsuariosModel.updateUser(id, req.body);
+    const userData  = req.body;
     
-    if (!user || user.affectedRows === 0) {
+    const result = await UsuariosModel.updateUser(id, userData);
+    if (!result) {
       return responses.fail(req, res, "Error al actualizar usuario", 422);
     }
     
-    responses.success(req, res, { id, ...req.body });
+    responses.success(req, res, { id, ...userData });
   } catch (error) {
     if (error.code === 'ER_DUP_ENTRY') {
       return responses.fail(req, res, "Ya existe un usuario con ese correo electrónico", 409);

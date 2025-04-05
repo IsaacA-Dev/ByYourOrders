@@ -3,14 +3,14 @@
 // Statements
 const insertContrasena = `
     INSERT INTO Contrasenas (
-        contrasena,
-        usuario_id
+        usuario_id,
+        contrasena_hash
     ) VALUES (?,?)
 `;
 
 const updateContrasena = `
     UPDATE Contrasenas SET
-        contrasena = ?
+        contrasena_hash = ?
     WHERE usuario_id = ?
 `;
 

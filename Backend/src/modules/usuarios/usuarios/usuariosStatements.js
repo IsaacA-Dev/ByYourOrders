@@ -29,9 +29,8 @@ const insertUser = `
     correo_electronico, 
     fecha_de_nacimiento, 
     nivel_id, 
-    departamento_id, 
-    activo
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    departamento_id 
+  ) VALUES (?, ?, ?, ?, ?, ?, ?)
 `;
 
 const updateUser = `

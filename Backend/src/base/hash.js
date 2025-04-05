@@ -1,14 +1,17 @@
-//hash.js
 const config = require('../config');
 const bcrypt = require('bcryptjs');
 
 const hash = async (password) => {
-    const salt = await bcrypt.genSalt(config.bcrypt.saltRounds);
-    return await bcrypt.hash(password, salt);
+    try {
+        const salt = await bcrypt.genSalt(config.bcrypt.saltRounds);
+        return await bcrypt.hash(password, salt);
+    } catch (err) {
+        console.error("Error hashing password:", err);
+        throw err;
+    }
 };
+
 
 module.exports = {
     hash
 };
-
-

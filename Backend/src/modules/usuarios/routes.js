@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const response = require('../../base/responses');
 
 router.get('/', (req, res) => {
     response.success(req, res, 'Listado de las rutas del modulo de usuarios');
 })
+
+//rutas de contrasenas 
+const contrasenasController = require('./contrasenas/contrasenasController');
+router.put('/contrasenas/:id', contrasenasController.updateContrasena);
 
 //rutas de usuarios
 const usuariosController = require('./usuarios/usuariosController');

@@ -24,45 +24,50 @@ class UsuariosModel {
     static async insertUser(user, contrasena) {
         const connectionTransaction = await connection.getConnection();
         try {
-            await connectionTransaction.beginTransaction();
-            
-            const { nombre, apellido_paterno, apellido_materno, correo_electronico, fecha_de_nacimiento, nivel_id, departamento_id } = user;
-            
-            const [newUser] = await connectionTransaction.execute(insertUser, [nombre, apellido_paterno, apellido_materno, correo_electronico, fecha_de_nacimiento, nivel_id, departamento_id]);
-            const usuario_id = newUser.insertId;
-            
-            await ContrasenasModel.insertContrasena({ contrasena, usuario_id }, connectionTransaction);
-            
-            await connectionTransaction.commit();
-            return { usuario_id };
+          await connectionTransaction.beginTransaction();
+          const { nombre, apellido_paterno, apellido_materno, correo_electronico, fecha_de_nacimiento, nivel_id, departamento_id } = user;
+          
+          const [newUser] = await connectionTransaction.execute(
+            insertUser, 
+            [nombre, apellido_paterno, apellido_materno, correo_electronico, fecha_de_nacimiento, nivel_id, departamento_id]
+          );
+          
+          const usuario_id = newUser.insertId;
+          
+          await ContrasenasModel.insertContrasena({ 
+            contrasena, 
+            usuario_id 
+          }, connectionTransaction);
+          
+          await connectionTransaction.commit();
+          return { usuario_id };
         } catch (error) {
-            await connectionTransaction.rollback();
-            throw new Error(error);
+          await connectionTransaction.rollback();
+          throw error; 
         } finally {
-            connectionTransaction.release();
+          connectionTransaction.release();
         }
-    }
+      }
 
-    static async updateUser(id, user, contrasena = null) {
-        const connectionTransaction = await connection.getConnection();
-        try {
-            await connectionTransaction.beginTransaction();
-            
-            const { nombre, apellido_paterno, apellido_materno, correo_electronico, fecha_de_nacimiento, nivel_id, departamento_id } = user;
-            await connectionTransaction.execute(updateUser, [nombre, apellido_paterno, apellido_materno, correo_electronico, fecha_de_nacimiento, nivel_id, departamento_id, id]);
-            
-            if (contrasena) {
-                await ContrasenasModel.updateContrasena({ contrasena, usuario_id: id }, connectionTransaction);
-            }
-            
-            await connectionTransaction.commit();
-            return { usuario_id: id };
-        } catch (error) {
-            await connectionTransaction.rollback();
-            throw new Error(error);
-        } finally {
-            connectionTransaction.release();
-        }
+    static async updateUser(id, user) {
+    const connectionTransaction = await connection.getConnection();
+    try {
+        await connectionTransaction.beginTransaction();
+        const { nombre, apellido_paterno, apellido_materno, correo_electronico, fecha_de_nacimiento, nivel_id, departamento_id, activo } = user;
+        
+        await connectionTransaction.execute(
+        updateUser, 
+        [nombre, apellido_paterno, apellido_materno, correo_electronico, fecha_de_nacimiento, nivel_id, departamento_id, activo, id]
+        );
+        
+        await connectionTransaction.commit();
+        return { usuario_id: id };
+    } catch (error) {
+        await connectionTransaction.rollback();
+        throw error;
+    } finally {
+        connectionTransaction.release();
+    }
     }
 
     static async deleteUser(id) {

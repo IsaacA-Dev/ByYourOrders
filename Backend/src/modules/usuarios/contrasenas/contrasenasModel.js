@@ -5,11 +5,12 @@ const hash = require('../../../base/hash');
 class ContrasenasModel {
     static async insertContrasena(contrasenaData, connectionTransaction = null) {
         try {
-            const { contrasena, usuario_id } = contrasenaData;
+            const { usuario_id, contrasena,  } = contrasenaData;
+            
             const contrasenaEncriptada = await hash.hash(contrasena);
 
             const conn = connectionTransaction || connection;
-            await conn.execute(insertContrasena, [contrasenaEncriptada, usuario_id]);
+            await conn.execute(insertContrasena, [usuario_id ,contrasenaEncriptada]);
 
             return { usuario_id };
         } catch (error) {
@@ -17,19 +18,35 @@ class ContrasenasModel {
         }
     }
 
-    static async updateContrasena(contrasenaData, connectionTransaction = null) {
+    static async updateContrasena(id, contrasenaData) {
+        const connectionTransaction = await connection.getConnection();
+    
         try {
-            const { contrasena, usuario_id } = contrasenaData;
+            await connectionTransaction.beginTransaction();
+    
+            const { contrasena, confirm_contrasena } = contrasenaData;
+    
+            if (contrasena !== confirm_contrasena) {
+                throw new Error("Las contraseñas no coinciden.");
+            }
+    
             const contrasenaEncriptada = await hash.hash(contrasena);
-
-            const conn = connectionTransaction || connection;
-            await conn.execute(updateContrasena, [contrasenaEncriptada, usuario_id]);
-
-            return { usuario_id };
+    
+            await connectionTransaction.execute(
+                updateContrasena,
+                [contrasenaEncriptada, id]
+            );
+    
+            await connectionTransaction.commit();
+            return { usuario_id: id };
         } catch (error) {
-            throw new Error(error);
+            await connectionTransaction.rollback();
+            throw error;
+        } finally {
+            connectionTransaction.release();
         }
     }
+    
 }
 
 module.exports = ContrasenasModel;

@@ -9,6 +9,10 @@ module.exports = {
     database: process.env.DB_NAME2,
   },
   bcrypt: {
-    saltRounds: process.env.BCRYPT_SALT_ROUNDS
-  }
+    saltRounds: 10
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET,
+    expiresIn: '1h',
+  },
 };
