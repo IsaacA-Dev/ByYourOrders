@@ -5,6 +5,7 @@ const response = require('../base/responses');
 
 const usuariosRoutes = require('./usuarios/routes');
 const autenticacionRoutes = require('./autenticacion/routes');
+const ordenesRoutes = require('./ordenes/routes');
 
 router.get('/', (req, res) => {
     response.success(req, res, 'Listado de los modulos');
@@ -12,5 +13,8 @@ router.get('/', (req, res) => {
 
 router.use('/modulousuarios', usuariosRoutes);
 router.use('/moduloautenticacion', autenticacionRoutes);
+router.use('/moduloordenes', ordenesRoutes);
+
+
 
 module.exports = router;

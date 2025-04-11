@@ -10,9 +10,10 @@ const getAllDepartamentos = `
         creado_el,
         actualizado_el
     FROM Departamentos
+    WHERE activo = true
 `;
 
-const getOneDepartamento = `${getAllDepartamentos} WHERE departamento_id = ?`;
+const getOneDepartamento = `${getAllDepartamentos} AND departamento_id = ?`;
 
 const insertDepartamento = `
     INSERT INTO Departamentos (

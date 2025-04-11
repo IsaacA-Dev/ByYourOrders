@@ -17,9 +17,10 @@ const getAllUsers = `
   FROM Usuarios AS u 
   INNER JOIN Niveles AS n ON u.nivel_id = n.nivel_id 
   INNER JOIN Departamentos AS d ON u.departamento_id = d.departamento_id
+  WHERE u.activo = true
 `;
 
-const getOneUser = `${getAllUsers} WHERE u.usuario_id = ?`;
+const getOneUser = `${getAllUsers} AND u.usuario_id = ?`;
 
 const insertUser = `
   INSERT INTO Usuarios (

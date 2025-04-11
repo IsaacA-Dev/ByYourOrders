@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const validateToken = require('../../middlewares/validateToken');
+const checkRole = require('../../middlewares/checkRole');
 
 
 router.get('/', (req, res) => {
@@ -8,31 +10,31 @@ router.get('/', (req, res) => {
 
 //rutas de contrasenas 
 const contrasenasController = require('./contrasenas/contrasenasController');
-router.put('/contrasenas/:id', contrasenasController.updateContrasena);
+router.put('/contrasenas/:id', validateToken, contrasenasController.updateContrasena);
 
 //rutas de usuarios
 const usuariosController = require('./usuarios/usuariosController');
-router.get('/usuarios', usuariosController.getAllUsers);
-router.get('/usuarios/:id', usuariosController.getOneUser);
-router.post('/usuarios', usuariosController.insertUser);
-router.put('/usuarios/:id', usuariosController.updateUser);
-router.delete('/usuarios/:id', usuariosController.deleteUser);
+router.get('/usuarios', validateToken, checkRole(['Dev']), usuariosController.getAllUsers);
+router.get('/usuarios/:id', validateToken, usuariosController.getOneUser);
+router.post('/usuarios', validateToken, usuariosController.insertUser);
+router.put('/usuarios/:id', validateToken, usuariosController.updateUser);
+router.delete('/usuarios/:id', validateToken, usuariosController.deleteUser);
 
 //rutas de niveles
 const nivelesController = require('./niveles/nivelesController');
-router.get('/niveles', nivelesController.getAllNiveles);
-router.get('/niveles/:id', nivelesController.getOneNivel);
-router.post('/niveles', nivelesController.insertNivel);
-router.put('/niveles/:id', nivelesController.updateNivel);
-router.delete('/niveles/:id', nivelesController.deleteNivel);
+router.get('/niveles', validateToken, nivelesController.getAllNiveles);
+router.get('/niveles/:id', validateToken, nivelesController.getOneNivel);
+router.post('/niveles', validateToken, nivelesController.insertNivel);
+router.put('/niveles/:id', validateToken, nivelesController.updateNivel);
+router.delete('/niveles/:id', validateToken, nivelesController.deleteNivel);
 
 //rutas de Departamentos
 const departamentosController = require('./departamentos/departamentosController');
-router.get('/departamentos', departamentosController.getAllDepartamentos);
-router.get('/departamentos/:id', departamentosController.getOneDepartamento);
-router.post('/departamentos', departamentosController.insertDepartamento);
-router.put('/departamentos/:id', departamentosController.updateDepartamento);
-router.delete('/departamentos/:id', departamentosController.deleteDepartamento);
+router.get('/departamentos', validateToken, departamentosController.getAllDepartamentos);
+router.get('/departamentos/:id', validateToken, departamentosController.getOneDepartamento);
+router.post('/departamentos', validateToken, departamentosController.insertDepartamento);
+router.put('/departamentos/:id', validateToken, departamentosController.updateDepartamento);
+router.delete('/departamentos/:id', validateToken, departamentosController.deleteDepartamento);
 
 
 module.exports = router;

@@ -9,9 +9,10 @@ const getAllNiveles = `
         creado_el,
         actualizado_el
     FROM Niveles
+    WHERE activo = true
 `;
 
-const getOneNivel = `${getAllNiveles} WHERE nivel_id = ?`;
+const getOneNivel = `${getAllNiveles} AND nivel_id = ?`;
 
 const insertNivel = `
     INSERT INTO Niveles (
