@@ -1,0 +1,283 @@
+@startuml Esquema_Base_Datos
+
+' Definición del estilo
+skinparam linetype ortho
+skinparam monochrome false
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+
+' Configuración de colores
+!define ENTITY_BG_COLOR #E2F0FF
+!define ENTITY_BORDER_COLOR #3C7FC0
+!define RELATIONSHIP_COLOR #FF8C00
+
+' Tablas relacionadas con Tipos de Cajas
+entity "Tipos_Cajas" as tipos_cajas {
+  * tipo_caja_id: BIGINT UNSIGNED <<PK>>
+  --
+  nombre: VARCHAR(255)
+  descripcion: VARCHAR(255)
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Construcciones_Estandares" as construcciones_estandares {
+  * construccion_estandar_id: BIGINT UNSIGNED <<PK>>
+  --
+  nombre: VARCHAR(255)
+  descripcion: VARCHAR(255)
+  lado: ENUM
+  lumber_superior: INT
+  lumber_inferior: INT
+  lumber_medio: INT
+  orientacion_plywood: ENUM
+  notas: TEXT
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Cajas_Estandares" as cajas_estandares {
+  * caja_estandar_id: BIGINT UNSIGNED <<PK>>
+  * tipo_caja_id: BIGINT UNSIGNED <<FK>>
+  * construccion_estandar_id: BIGINT UNSIGNED <<FK>>
+  --
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+' Tablas relacionadas con Usuarios
+entity "Departamentos" as departamentos {
+  * departamento_id: BIGINT UNSIGNED <<PK>>
+  --
+  nombre: VARCHAR(255)
+  descripcion: VARCHAR(255)
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Niveles" as niveles {
+  * nivel_id: BIGINT UNSIGNED <<PK>>
+  --
+  nombre: VARCHAR(255)
+  descripcion: VARCHAR(255)
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Usuarios" as usuarios {
+  * usuario_id: BIGINT UNSIGNED <<PK>>
+  * nivel_id: BIGINT UNSIGNED <<FK>>
+  * departamento_id: BIGINT UNSIGNED <<FK>>
+  --
+  nombre: VARCHAR(255)
+  apellido_paterno: VARCHAR(255)
+  apellido_materno: VARCHAR(255)
+  fecha_de_nacimiento: DATE
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Contrasenas" as contrasenas {
+  * usuario_id: BIGINT UNSIGNED <<PK, FK>>
+  --
+  contrasena_hash: VARCHAR(255)
+  creado_el: TIMESTAMP
+  actualizada_el: TIMESTAMP
+}
+
+' Tablas relacionadas con Clientes y Modelos
+entity "Clientes" as clientes {
+  * cliente_id: BIGINT UNSIGNED <<PK>>
+  --
+  nombre: VARCHAR(255)
+  razon_social: VARCHAR(255)
+  correo_electronico: VARCHAR(255)
+  telefono: VARCHAR(255)
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Modelos" as modelos {
+  * modelo_id: BIGINT UNSIGNED <<PK>>
+  * tipo_caja_id: BIGINT UNSIGNED <<FK>>
+  * cliente_id: BIGINT UNSIGNED <<FK>>
+  --
+  nombre: VARCHAR(255)
+  alto: DECIMAL(8,2)
+  ancho: DECIMAL(8,2)
+  largo: DECIMAL(8,2)
+  notas: TEXT
+  aprobado: BOOLEAN
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Materiales" as materiales {
+  * material_id: BIGINT UNSIGNED <<PK>>
+  --
+  nombre: VARCHAR(255)
+  unidad: VARCHAR(255)
+  costo: DECIMAL(8,2)
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Boms" as boms {
+  * materiales_modelos_id: BIGINT UNSIGNED <<PK>>
+  * modelo_id: BIGINT UNSIGNED <<FK>>
+  * material_id: BIGINT UNSIGNED <<FK>>
+  --
+  cantidad: INT
+}
+
+' Tablas de Cotizaciones
+entity "Cotizaciones" as cotizaciones {
+  * cotizacion_id: BIGINT UNSIGNED <<PK>>
+  * cliente_id: BIGINT UNSIGNED <<FK>>
+  --
+  numero_cotizacion: VARCHAR(50)
+  fecha_emision: DATE
+  fecha_validez: DATE
+  subtotal: DECIMAL(12,2)
+  impuesto: DECIMAL(12,2)
+  total: DECIMAL(12,2)
+  estado: ENUM
+  notas: TEXT
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Detalles_Cotizacion" as detalles_cotizacion {
+  * detalle_cotizacion_id: BIGINT UNSIGNED <<PK>>
+  * cotizacion_id: BIGINT UNSIGNED <<FK>>
+  * modelo_id: BIGINT UNSIGNED <<FK>>
+  --
+  cantidad: INT
+  precio_unitario: DECIMAL(12,2)
+  importe: DECIMAL(12,2)
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+' Tablas de Órdenes
+entity "Ordenes" as ordenes {
+  * orden_id: BIGINT UNSIGNED <<PK>>
+  * modelo_id: BIGINT UNSIGNED <<FK>>
+  cotizacion_id: BIGINT UNSIGNED <<FK>>
+  --
+  tipo: ENUM
+  fecha: DATE
+  cantidad: INT
+  estatus: ENUM
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Ordenes_Procesos" as ordenes_procesos {
+  * orden_proceso_id: BIGINT UNSIGNED <<PK>>
+  * usuario_id: BIGINT UNSIGNED <<FK>>
+  * orden_id: BIGINT UNSIGNED <<FK>>
+  --
+  fecha: DATE
+  hora: TIME
+  operacion: ENUM
+}
+
+' Tablas de Facturación
+entity "Facturas" as facturas {
+  * factura_id: BIGINT UNSIGNED <<PK>>
+  * cliente_id: BIGINT UNSIGNED <<FK>>
+  --
+  numero_factura: VARCHAR(50)
+  fecha_emision: DATE
+  fecha_vencimiento: DATE
+  subtotal: DECIMAL(12,2)
+  impuesto: DECIMAL(12,2)
+  total: DECIMAL(12,2)
+  estado: ENUM
+  metodo_pago: ENUM
+  referencia_pago: VARCHAR(100)
+  notas: TEXT
+  activo: BOOLEAN
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Facturas_Ordenes" as facturas_ordenes {
+  * factura_orden_id: BIGINT UNSIGNED <<PK>>
+  * factura_id: BIGINT UNSIGNED <<FK>>
+  * orden_id: BIGINT UNSIGNED <<FK>>
+  --
+  cantidad: INT
+  precio_unitario: DECIMAL(12,2)
+  importe: DECIMAL(12,2)
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+entity "Pagos" as pagos {
+  * pago_id: BIGINT UNSIGNED <<PK>>
+  * factura_id: BIGINT UNSIGNED <<FK>>
+  * usuario_id: BIGINT UNSIGNED <<FK>>
+  --
+  fecha: DATE
+  monto: DECIMAL(12,2)
+  metodo: ENUM
+  referencia: VARCHAR(100)
+  notas: TEXT
+  creado_el: TIMESTAMP
+  actualizado_el: TIMESTAMP
+}
+
+' Relaciones
+
+' Relaciones de Cajas
+tipos_cajas ||--o{ cajas_estandares
+construcciones_estandares ||--o{ cajas_estandares
+tipos_cajas ||--o{ modelos
+
+' Relaciones de Usuarios
+departamentos ||--o{ usuarios
+niveles ||--o{ usuarios
+usuarios ||--|| contrasenas
+
+' Relaciones de Clientes/Modelos
+clientes ||--o{ modelos
+clientes ||--o{ cotizaciones
+clientes ||--o{ facturas
+
+' Relaciones de Materiales
+modelos ||--o{ boms
+materiales ||--o{ boms
+
+' Relaciones de Cotizaciones
+cotizaciones ||--o{ detalles_cotizacion
+modelos ||--o{ detalles_cotizacion
+cotizaciones ||--o{ ordenes
+
+' Relaciones de Órdenes
+modelos ||--o{ ordenes
+ordenes ||--o{ ordenes_procesos
+usuarios ||--o{ ordenes_procesos
+
+' Relaciones de Facturación
+facturas ||--o{ facturas_ordenes
+ordenes ||--o{ facturas_ordenes
+facturas ||--o{ pagos
+usuarios ||--o{ pagos
+
+@enduml
