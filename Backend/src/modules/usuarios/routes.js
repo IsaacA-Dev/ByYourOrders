@@ -14,7 +14,7 @@ router.put('/contrasenas/:id', validateToken, contrasenasController.updateContra
 
 //rutas de usuarios
 const usuariosController = require('./usuarios/usuariosController');
-router.get('/usuarios', validateToken, checkRole(['Dev']), usuariosController.getAllUsers);
+router.get('/usuarios', validateToken, checkRole(['Admin', 'Dev']), usuariosController.getAllUsers);
 router.get('/usuarios/:id', validateToken, usuariosController.getOneUser);
 router.post('/usuarios', validateToken, usuariosController.insertUser);
 router.put('/usuarios/:id', validateToken, usuariosController.updateUser);

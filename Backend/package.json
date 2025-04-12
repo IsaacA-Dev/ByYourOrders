@@ -13,10 +13,12 @@
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
-    "mysql2": "^3.14.0"
+    "mysql2": "^3.14.0",
+    "sanitize-html": "^2.15.0"
   },
   "devDependencies": {
     "dotenv": "^16.4.7",

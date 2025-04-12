@@ -16,8 +16,8 @@ const MaterialesController = require('./materiales/materialesController');
 router.get('/materiales', validateToken, MaterialesController.getAllMateriales);
 router.get('/materiales/:id', validateToken, MaterialesController.getMaterialById);
 router.get('/materiales/name/:name', validateToken, MaterialesController.getMaterialByName);
-router.post('/materiales', validateToken, checkRole('admin'), MaterialesController.insertMaterial);
-router.put('/materiales', validateToken, checkRole('admin'), MaterialesController.updateMaterial);
-router.delete('/materiales/:id', validateToken, checkRole('admin'), MaterialesController.deleteMaterial);
+router.post('/materiales', validateToken, checkRole(['Admin', 'Dev']), MaterialesController.insertMaterial);
+router.put('/materiales', validateToken, checkRole(['Admin', 'Dev']), MaterialesController.updateMaterial);
+router.delete('/materiales/:id', validateToken, checkRole(['Admin', 'Dev']), MaterialesController.deleteMaterial);
 
 module.exports = router;

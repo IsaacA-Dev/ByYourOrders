@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const sanitizeMiddleware = require('./middlewares/sanitize'); 
+const { body, validationResult } = require('express-validator');
 
 const app = express();
 
@@ -8,8 +10,8 @@ const app = express();
 app.use(express.json()); 
 app.use(cors()); 
 app.use(morgan('dev')); 
+app.use(sanitizeMiddleware);
 
-//Importar y usar la ruta principal
 const mainRoutes = require('./modules/routes');
 app.use('/api', mainRoutes);
 

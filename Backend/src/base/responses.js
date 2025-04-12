@@ -35,3 +35,13 @@ exports.empty = function (req, res) {
     let response = {};
     res.status(200).send(response);
 };
+
+exports.validationError = function (req, res, errors) {
+    let response = {
+        error: true,
+        status: 400,
+        message: 'Errores de validación.',
+        errors: errors.array(), 
+    };
+    res.status(400).send(response);
+};
