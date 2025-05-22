@@ -25,7 +25,7 @@ const insertDepartamento = `
 const updateDepartamento = `
     UPDATE Departamentos SET
         nombre = ?,
-        descripcion = ?,
+        descripcion = ?
     WHERE departamento_id = ?
 `;
 

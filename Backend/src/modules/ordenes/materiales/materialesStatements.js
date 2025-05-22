@@ -8,8 +8,8 @@ class MaterialesStatements {
     activo,
     creado_el,
     actualizado_el
-    FROM materiales
-    WHERE activo = true
+    FROM Materiales
+    WHERE activo = 1
     `;
 
     static getMaterialById = `${this.getAllMateriales} AND material_id = ?`;
@@ -17,7 +17,7 @@ class MaterialesStatements {
     static getMaterialByName = `${this.getAllMateriales} AND nombre = ?`;
 
     static insertMaterial = `
-    INSERT INTO materiales(
+    INSERT INTO Materiales(
     nombre, 
     unidad, 
     costo
@@ -25,7 +25,7 @@ class MaterialesStatements {
     `;
 
     static updateMaterial = `
-    UPDATE materiales SET
+    UPDATE Materiales SET
     nombre = ?,
     unidad = ?,
     costo = ?
@@ -33,7 +33,7 @@ class MaterialesStatements {
     `;
 
     static deleteMaterial = `
-    DELETE FROM materiales WHERE material_id = ?
+    DELETE FROM Materiales WHERE material_id = ?
     `;
 }
 

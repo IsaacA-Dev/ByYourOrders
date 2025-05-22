@@ -7,8 +7,7 @@ class MaterialesController {
             const materiales = await MaterialesModel.getAllMateriales();
             response.success(req, res, materiales, 200);
         } catch (error) {
-            console.error('Error in getAllMateriales:', error);
-            response.error(req, res, 'Error retrieving materials', 500, error);
+            response.error(req, res, 'Error al consultar los materiales', 500, error);
         }
     }
 
@@ -17,13 +16,12 @@ class MaterialesController {
             const { id } = req.params;
             const material = await MaterialesModel.getMaterialById(id);
             if (!material) {
-                response.error(req, res, 'Material not found', 404);
+                response.error(req, res, 'Material no encontrado', 404);
                 return;
             }
             response.success(req, res, material, 200);
         } catch (error) {
-            console.error('Error in getMaterialById:', error);
-            response.error(req, res, 'Error retrieving material', 500, error);
+            response.error(req, res, 'Error al consultar el material', 500, error);
         }
     }
 
@@ -32,13 +30,12 @@ class MaterialesController {
             const { name } = req.params;
             const material = await MaterialesModel.getMaterialByName(name);
             if (!material) {
-                response.error(req, res, 'Material not found', 404);
+                response.error(req, res, 'Material no encontrado', 404);
                 return;
             }
             response.success(req, res, material, 200);
         } catch (error) {
-            console.error('Error in getMaterialByName:', error);
-            response.error(req, res, 'Error retrieving material', 500, error);
+            response.error(req, res, 'Error al consultar el material', 500, error);
         }
     }
 
@@ -46,25 +43,36 @@ class MaterialesController {
         try {
             const material = req.body;
             const result = await MaterialesModel.insertMaterial(material);
-            response.success(req, res, { id: result.insertId }, 201);
+            if (!result || !result.insertId) {
+                response.error(req, res, 'Error al crear el material', 422);
+                return;
+            }
+            if (result.affectedRows === 0) {
+                response.error(req, res, 'No se realizo ningun cambio', 422);
+                return;
+            }
+            response.success(req, res, { id: result.insertId, ...material }, 201);
         } catch (error) {
-            console.error('Error in insertMaterial:', error);
-            response.error(req, res, 'Error inserting material', 500, error);
+            response.error(req, res, 'Error al insertar el material', 500, error);
         }
     }
 
     static async updateMaterial(req, res) {
         try {
-            const material = req.body;
-            const result = await MaterialesModel.updateMaterial(material);
-            if (result.affectedRows === 0) {
-                response.error(req, res, 'Material not found', 404);
+            const id = req.params.id;
+            const material = await MaterialesModel.updateMaterial(id, req.body);
+
+            if (!material) {
+                response.error(req, res, 'Material No Encontrado', 404);
                 return;
             }
-            response.success(req, res, 'Material updated successfully', 200);
+            if (material.affectedRows === 0) {
+                response.error(req, res, 'No se realizo ningun cambio', 422);
+                return;
+            }
+            response.success(req, res, { id, ...req.body }, 200);            
         } catch (error) {
-            console.error('Error in updateMaterial:', error);
-            response.error(req, res, 'Error updating material', 500, error);
+            response.error(req, res, 'Error al actualizar el material', 500, error);
         }
     }
 
@@ -73,13 +81,12 @@ class MaterialesController {
             const { id } = req.params;
             const result = await MaterialesModel.deleteMaterial(id);
             if (result.affectedRows === 0) {
-                response.error(req, res, 'Material not found', 404);
+                response.error(req, res, 'Material No Encontrado', 404);
                 return;
             }
-            response.success(req, res, 'Material deleted successfully', 200);
+            response.success(req, res, 'Material eliminado correctamente', 200);
         } catch (error) {
-            console.error('Error in deleteMaterial:', error);
-            response.error(req, res, 'Error deleting material', 500, error);
+            response.error(req, res, 'Error al eliminar el material', 500, error);
         }
     }
 }

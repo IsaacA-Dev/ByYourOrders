@@ -48,7 +48,13 @@ const updateDepartamento = async (req, res) => {
     try {
         const id = req.params.id;
         const departamento = await DepartamentosModel.updateDepartamento(id, req.body);
-        responses.success(req, res, departamento);
+        if (!departamento || !departamento.affectedRows) {
+            return responses.fail(req, res, "Error al actualizar departamento", 422);
+        }
+        if (departamento.affectedRows === 0) {
+            return responses.fail(req, res, "Departamento no encontrado", 404);
+        }
+        responses.success(req, res, { id: id, ...req.body }, 200);
     } catch (error) {
         responses.error(req, res, error.message, 500);
     }

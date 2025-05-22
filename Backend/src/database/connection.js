@@ -16,8 +16,9 @@ const pool = mysql.createPool({
 const query = async (sql, params = []) => {
   const connection = await pool.getConnection();
   try {
+    console.log('sql', sql);
+    console.log('params', params);
     const [results] = await connection.query(sql, params);
-    
     return results;
   } catch (err) {
     throw err;
@@ -30,7 +31,10 @@ const query = async (sql, params = []) => {
 const execute = async (sql, params = []) => {
   const connection = await pool.getConnection();
   try {
-    const [results] = await connection.execute(sql, params);
+    console.log(sql, params);
+    
+    
+    const [results] = await connection.execute(sql, params);    
     return results;
   } catch (err) {
     throw err;
