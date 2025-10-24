@@ -1,8 +1,8 @@
-# 🏭 ByYourOrders
+#  ByYourOrders
 
 **ByYourOrders** es un sistema de gestión integral diseñado para optimizar el control de **Órdenes de Pedido, Modelos de Productos y Materiales de Producción**. Su objetivo principal es centralizar y digitalizar el flujo de trabajo de manufactura, asegurando la trazabilidad y la eficiencia operativa.
 
-## ✨ Características Principales
+##  Características Principales
 
 El sistema aborda las necesidades operativas clave del proceso productivo:
 
